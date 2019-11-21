@@ -5,7 +5,9 @@
   <body>
     <script>
       axios.get("https://dweet.io/get/latest/dweet/for/wemos1984")
-       .then(r=>alert(r.data))
+       .then(r=>{
+      document.write(JSON.stringify(r.data))
+      })
     </script>
   </body>
 </html>
