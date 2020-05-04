@@ -6,13 +6,29 @@ template: `
   <h1>{{title}}</h1>
   
   <h3>Deaths toll: {{toll}}</h3>
+
+
+ <chart title="Deaths in Total" 
+    v-bind:dataset="this.globaltoll" 
+    v-bind:labels="this.labels" htmlid="can-globaltoll">
+ </chart>
   
+  
+<br> 
+<br> 
+
+ <div v-for="(x,i) in all_countries">
+ <input type="checkbox" :id="x.name" v-model="x.checked" @change="click(i)">
+ <label :for="x.name" > {{x.name}} </label>
+ </div>
+ 
+ 
   <chart title="Confirmed" 
   	v-bind:dataset="this.dataset.confirmed" 
   	v-bind:labels="this.labels" htmlid="can-confirmed">
   </chart>
   
-  <chart title="New Confirme" 
+  <chart title="New Confirmed" 
   v-bind:dataset="this.dataset.nc" 
   v-bind:labels="this.labels" htmlid="can-nc">
   </chart>
@@ -36,13 +52,17 @@ data: function(){
 	return {
 		title: "loading ...",
 		url : "https://pomber.github.io/covid19/timeseries.json",
-		maxN: 25,
+		maxN: 30,
 		toll:0, 
 		labels:[],
 		dataset:{},
-		countries: [
-	  		{name:"Poland",
+        countries:[
+			{name:"Poland",
 				color:"#3e95cd"},
+		],
+		all_countries: [
+	  	  {name:"Poland",
+				color:"#3e95cd", checked:true},
 			{name:"Germany",
 				color:"#8e5ea2"},
 			{name:"Italy",
@@ -62,8 +82,12 @@ data: function(){
 
 methods: {
 
-
+    click: function(index){
+    	this.prepareData(this.rawdata)
+    },
+	
 	prepareData: function(d){
+	    this.rawdata = d
 	    var dataset = {deaths:[], confirmed:[],recovered:[],nd:[],nc:[]}
 		var labels = []
 		var toll = 0
@@ -72,6 +96,26 @@ methods: {
 		this.labels = labels
 		this.dataset = dataset
 	
+		this.countries = [];
+		this.all_countries.map(x=>{
+			if(x.checked)this.countries.push(x)
+		})
+		
+		this.globaltoll = [{label:"Cumulative",data:[],fill:false,borderColor:"red"}]
+		
+		for(let i = 1; i <= this.maxN; i++){
+		    let loctoll = 0;
+			for(let k in d.data) loctoll += d.data[k][d.data[k].length-i].deaths;
+			this.globaltoll[0].data.push(loctoll);
+		}
+		this.globaltoll[0].data.reverse()
+		
+		this.globaltoll.push({label:"New",data:[],fill:false,borderColor:"black"})
+		this.globaltoll[1].data.push(null)
+		for(let i = 1; i < this.globaltoll[0].data.length; i++){
+		    let v = this.globaltoll[0].data[i] - this.globaltoll[0].data[i-1];
+			this.globaltoll[1].data.push(v)
+		}
 		
 		this.countries.map(x=>{
 			for(let k in dataset) {
