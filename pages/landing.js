@@ -52,7 +52,7 @@ data: function(){
 	return {
 		title: "loading ...",
 		url : "https://pomber.github.io/covid19/timeseries.json",
-		maxN: 300,
+		maxN: 90,
 		toll:0, 
 		labels:[],
 		dataset:{},
