@@ -3,7 +3,7 @@ Vue.component('Landing',{
 template: `
   <div>
   
-  <h1>{{title}}</h1>
+  <h1>{{title}} (last {{maxN}} days)</h1>
   
   <h3>Deaths toll: {{toll}}</h3>
 
