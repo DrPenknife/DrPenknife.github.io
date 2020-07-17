@@ -33,7 +33,7 @@ const countries = [
 ]
 
 var url = "https://pomber.github.io/covid19/timeseries.json"
-const maxN = 25
+const maxN = 125
 
 axios.get(url).then(function(d){
     var dataset = {deaths:[], confirmed:[],recovered:[],nd:[],nc:[]}
